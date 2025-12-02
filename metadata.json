@@ -1,0 +1,5 @@
+{
+  "name": "CineGen AI Storyboarder",
+  "description": "A cinematic storyboard generator that maintains character consistency using Gemini AI image generation.",
+  "requestFramePermissions": []
+}
