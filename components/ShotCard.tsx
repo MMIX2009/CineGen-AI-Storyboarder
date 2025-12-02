@@ -12,6 +12,10 @@ export const ShotCard: React.FC<ShotCardProps> = ({ shot, index }) => {
   const isError = shot.status === GenerationStatus.ERROR;
   const isSuccess = shot.status === GenerationStatus.SUCCESS;
 
+  // Generate timestamp for filename: YYYYMMDD_HHmmss
+  const now = new Date();
+  const timestamp = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}${String(now.getSeconds()).padStart(2, '0')}`;
+
   const handleFullScreen = () => {
     if (!shot.imageUrl) return;
 
@@ -92,7 +96,7 @@ export const ShotCard: React.FC<ShotCardProps> = ({ shot, index }) => {
           <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
             <a 
               href={shot.imageUrl} 
-              download={`shot-${index + 1}.png`}
+              download={`shot-${index + 1}_${timestamp}.png`}
               className="p-2 bg-white/10 hover:bg-white/20 rounded-full text-white backdrop-blur-sm transition-colors"
               title="Download High Res"
             >
