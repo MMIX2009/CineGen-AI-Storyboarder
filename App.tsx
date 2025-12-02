@@ -124,6 +124,45 @@ const App: React.FC = () => {
     setIsGenerating(false);
   };
 
+  const handleRetry = async (shotId: string) => {
+    // Check if reference image is available
+    if (!refImage) {
+      setShots(prev => prev.map(s => 
+        s.id === shotId 
+          ? { ...s, status: GenerationStatus.ERROR, error: "Reference image missing. Please re-upload Character Ref." } 
+          : s
+      ));
+      return;
+    }
+
+    // Find the shot to retry
+    const shotToRetry = shots.find(s => s.id === shotId);
+    if (!shotToRetry) return;
+
+    // Set status to PENDING
+    setShots(prev => prev.map(s => 
+      s.id === shotId 
+        ? { ...s, status: GenerationStatus.PENDING, error: undefined } 
+        : s
+    ));
+
+    try {
+      const imageUrl = await generateStoryboardFrame(refImage, shotToRetry);
+      
+      setShots(prev => prev.map(s => 
+        s.id === shotId 
+          ? { ...s, status: GenerationStatus.SUCCESS, imageUrl } 
+          : s
+      ));
+    } catch (error: any) {
+      setShots(prev => prev.map(s => 
+        s.id === shotId 
+          ? { ...s, status: GenerationStatus.ERROR, error: error.message } 
+          : s
+      ));
+    }
+  };
+
   const handleClear = () => {
     setShots([]);
     setIsGenerating(false);
@@ -298,7 +337,7 @@ const App: React.FC = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pb-20">
                 {shots.map((shot, index) => (
-                  <ShotCard key={shot.id} shot={shot} index={index} />
+                  <ShotCard key={shot.id} shot={shot} index={index} onRetry={handleRetry} />
                 ))}
               </div>
             </div>

@@ -1,13 +1,14 @@
 import React from 'react';
 import { GeneratedShot, GenerationStatus } from '../types';
-import { Download, Loader2, AlertCircle, Maximize2 } from 'lucide-react';
+import { Download, Loader2, AlertCircle, Maximize2, RefreshCw } from 'lucide-react';
 
 interface ShotCardProps {
   shot: GeneratedShot;
   index: number;
+  onRetry: (id: string) => void;
 }
 
-export const ShotCard: React.FC<ShotCardProps> = ({ shot, index }) => {
+export const ShotCard: React.FC<ShotCardProps> = ({ shot, index, onRetry }) => {
   const isPending = shot.status === GenerationStatus.PENDING;
   const isError = shot.status === GenerationStatus.ERROR;
   const isSuccess = shot.status === GenerationStatus.SUCCESS;
@@ -77,9 +78,17 @@ export const ShotCard: React.FC<ShotCardProps> = ({ shot, index }) => {
         )}
         
         {isError && (
-          <div className="flex flex-col items-center gap-2 text-red-400 px-4 text-center">
-            <AlertCircle className="w-8 h-8" />
-            <span className="text-xs">{shot.error || "Generation Failed"}</span>
+          <div className="flex flex-col items-center gap-3 text-red-400 px-6 text-center z-10 w-full">
+            <AlertCircle className="w-8 h-8 opacity-80" />
+            <span className="text-xs font-mono break-words w-full px-2">{shot.error || "Generation Failed"}</span>
+            <button 
+              onClick={() => onRetry(shot.id)}
+              className="mt-2 flex items-center gap-2 px-4 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded-md text-xs font-medium text-red-200 transition-all hover:scale-105 active:scale-95 group/btn"
+              title="Retry generation for this shot"
+            >
+              <RefreshCw className="w-3 h-3 group-hover/btn:rotate-180 transition-transform duration-500" />
+              RETRY SHOT
+            </button>
           </div>
         )}
 
